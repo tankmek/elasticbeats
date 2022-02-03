@@ -1,0 +1,115 @@
+###################### Winlogbeat Configuration ########################
+#
+# You can find the full configuration reference here:
+# - https://bit.ly/3ukdwEx
+# - https://go.es.io/WinlogbeatConfig
+#
+# References:
+# - https://bit.ly/3J3hmWu (NSA Spotting the Adversary)
+# - https://bit.ly/347czox (Microsoft Events to Monitor)
+## 
+########################################################################
+winlogbeat.event_logs:
+
+##################################################
+# Sexy Six / Splunk Conf 2015                   # 
+# https://bit.ly/3AT2mbb (Michael Gough)        #
+##################################################
+  - name: Security
+    ignore_older: 24h
+    event_id: 4688, 5140, 5156, 1102
+    
+  - name: System
+  ignore_older: 24h
+  event_id: 7045 
+ 
+############################################################
+# PowerShell Logging                                      #
+# https://www.mandiant.com/resources/greater-visibilityt  #
+############################################################
+  - name: Windows PowerShell
+    event_id: 400, 403, 600, 800
+    processors:
+      - script:
+          lang: javascript
+          id: powershell
+          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+# Must be explicitly enabled
+  - name: Microsoft-Windows-PowerShell/Operational
+    event_id: 4103-4106
+    processors:
+      - script:
+          lang: javascript
+          id: powershell-operational
+          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+
+ ################   
+ # Applocker   #
+ ################
+ 
+  - name: Microsoft-Windows-AppLocker/EXE and DLL
+    ignore_older: 24h
+    event_id: 8003, 8004
+
+  - name: Microsoft-Windows-AppLocker/MSI and Script
+    ignore_older: 24h
+    event_id: 8003, 8004
+    
+  - name: Application
+    ignore_older: 24h
+    event_id: 865-868, 882
+ ######################################
+ # Account Usage & Group Activities #
+ ######################################
+  - name: Security
+    ignore_older: 24h
+    event_id: 4740, 4728, 4732, 4756, 4624, 4625, 4648, 4732, 4734, 4735, 4756
+ #######################  
+ # Windows Defender  #
+ ######################
+  - name: Microsoft-Windows-Windows Defender/Operational
+    ignore_older: 24h
+    event_id: 1005, 1006, 1008, 1010, 2001-2004, 3002, 5008
+############################
+# Windows Firewall
+#######################
+  - name: Microsoft-Windows-Windows Firewall With Advanced Security/Firewall
+    ignore_older: 24h
+    event_id: 2004-2006, 2009, 2033
+#########################
+# Kernel Driver Signing
+###########################
+  - name: Security
+    ignore_older: 24h
+    event_id: 5038, 6281
+     
+  - name: Microsoft-Windows-CodeIntegrity/Operational
+    ignore_older: 24h
+    event_id: 3001-3004, 3010, 3023
+###############################
+# System or Service Failures
+##############################
+  - name: System
+    ignore_older: 24h
+    event_id: 7022-7024, 7026, 7031, 7032, 7034
+
+#================================ General ======================================
+
+tags: ["endpoint", "globomantics"]
+
+setup.template.settings:
+  index.number_of_shards: 3
+
+setup.kibana:
+  host: "kibana.fakelabs.io:5601"
+
+output.elasticsearch:
+  hosts: ["elastic.fakelabs.io:9200"]
+  #Protocol - either `http` (default) or `https`.
+  #protocol: "https"
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+
+
