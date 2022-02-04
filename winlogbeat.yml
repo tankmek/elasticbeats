@@ -20,8 +20,8 @@ winlogbeat.event_logs:
     event_id: 4688, 5140, 5156, 1102
     
   - name: System
-  ignore_older: 24h
-  event_id: 7045 
+    ignore_older: 24h
+    event_id: 7045 
  
 ############################################################
 # PowerShell Logging                                      #
