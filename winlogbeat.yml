@@ -29,19 +29,10 @@ winlogbeat.event_logs:
 ############################################################
   - name: Windows PowerShell
     event_id: 400, 403, 600, 800
-    processors:
-      - script:
-          lang: javascript
-          id: powershell
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+
 # Must be explicitly enabled
   - name: Microsoft-Windows-PowerShell/Operational
     event_id: 4103-4106
-    processors:
-      - script:
-          lang: javascript
-          id: powershell-operational
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
 
  ################   
  # Applocker   #
@@ -95,18 +86,24 @@ winlogbeat.event_logs:
 
 #================================ General ======================================
 
-tags: ["endpoint", "globomantics"]
+tags: ["endpoint", "HR"]
 
 setup.template.settings:
   index.number_of_shards: 3
 
+# FQDN needs to match TLS certificate
 setup.kibana:
   host: "kibana.fakelabs.io:5601"
 
+# FQDN needs to match TLS certificate
 output.elasticsearch:
   hosts: ["elastic.fakelabs.io:9200"]
-  #Protocol - either `http` (default) or `https`.
-  #protocol: "https"
+  protocol: "https"
+# only use api OR username/password
+# username: beats_admin
+# password: "${BEATS_PASSWD}"
+  api_key: your_beats_api_key
+  pipeline: winlogbeat-%{[agent.version]}-routing
 
 processors:
   - add_host_metadata:
