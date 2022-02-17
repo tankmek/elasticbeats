@@ -22,7 +22,12 @@ winlogbeat.event_logs:
   - name: System
     ignore_older: 24h
     event_id: 7045 
- 
+    
+################   
+# Sysmon      #
+################
+#  - name: Microsoft-Windows-Sysmon/Operational
+  
 ############################################################
 # PowerShell Logging                                      #
 # https://www.mandiant.com/resources/greater-visibilityt  #
