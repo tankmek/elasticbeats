@@ -107,7 +107,7 @@ output.elasticsearch:
 # only use api OR username/password
 # username: beats_admin
 # password: "${BEATS_PASSWD}"
-  api_key: your_beats_api_key
+  api_key: "${API_KEY}"
   pipeline: winlogbeat-%{[agent.version]}-routing
 
 processors:
