@@ -23,10 +23,12 @@ winlogbeat.event_logs:
     ignore_older: 24h
     event_id: 7045 
     
-################   
-# Sysmon      #
-################
-#  - name: Microsoft-Windows-Sysmon/Operational
+######################################################
+# Recommended: SwiftOnSecurity Sysmon               #  
+# https://github.com/SwiftOnSecurity/sysmon-config  #
+######################################################
+  - name: Microsoft-Windows-Sysmon/Operational
+    ignore_older: 24h
   
 ############################################################
 # PowerShell Logging                                      #
